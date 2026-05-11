@@ -76,8 +76,8 @@ footer { display: none !important; }
 
 /* ── Body layout ── */
 #ios-body {
-    padding: 0 20px 40px !important;
-    gap: 20px !important;
+    padding: 24px 28px 64px !important;
+    gap: 32px !important;
     align-items: flex-start !important;
 }
 
@@ -204,9 +204,13 @@ body:has(#ios-cv .file-preview tr) #cv-remove-btn:hover { opacity: 0.7 !importan
     box-shadow: none !important;
     padding: 0 !important;
     position: relative !important;
-    min-height: 370px !important;
+    min-height: 200px !important;
     display: flex !important;
     flex-direction: column !important;
+    transition: min-height 0.25s ease !important;
+}
+#ios-cv:has(.file-preview tr) {
+    min-height: 0 !important;
 }
 
 /* ── Sticky left column ── */
@@ -314,8 +318,8 @@ textarea::placeholder { color: #C7C7CC !important; }
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 40px 16px;
+    gap: 6px;
+    padding: 20px 16px;
     flex: 1 1 auto;
     cursor: pointer;
     color: rgba(255,255,255,0.6);
@@ -514,14 +518,50 @@ textarea::placeholder { color: #C7C7CC !important; }
     padding: 0 !important;
 }
 
+/* ── Spacing between sections ── */
+.block:has(> .ios-sh),
+.block:has(> .section-header) {
+    margin-top: 20px !important;
+}
+/* Regen rows get a little bottom breathing room */
+.regen-wrap {
+    margin-bottom: 4px !important;
+}
+
 /* ── Row gaps ── */
-#out-row-bottom { gap: 24px !important; }
+#out-row-bottom { gap: 20px !important; }
 
 /* ── Strip Gradio chrome ── */
 .block, .form, .panel, .wrap {
     background: transparent !important;
     border: none !important;
     box-shadow: none !important;
+}
+
+/* ── Mobile layout ── */
+@media (max-width: 768px) {
+    #ios-body {
+        flex-direction: column !important;
+        padding: 16px 16px 48px !important;
+        gap: 0 !important;
+    }
+    #ios-body > .block {
+        flex: 1 1 100% !important;
+        min-width: 0 !important;
+        width: 100% !important;
+    }
+    #left-col {
+        position: relative !important;
+        top: auto !important;
+    }
+    #out-row-bottom {
+        flex-direction: column !important;
+        gap: 0 !important;
+    }
+    #out-row-bottom > .block {
+        flex: 1 1 100% !important;
+        min-width: 0 !important;
+    }
 }
 """
 
@@ -776,7 +816,7 @@ def build_ui():
                     ios_row("icon-pink", "Upload PDF", chevron=False)
                     gr.HTML("""
 <div id="cv-dropzone">
-  <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24"
+  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
        fill="none" stroke="currentColor" stroke-width="1.5"
        stroke-linecap="round" stroke-linejoin="round">
     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -810,7 +850,7 @@ def build_ui():
                     status_out = gr.HTML("", elem_id="status-out")
 
             # ── Right column ──────────────────────────────────────────
-            with gr.Column(scale=5):
+            with gr.Column(scale=5, elem_id="right-col"):
 
                 sh_copy("Cover Letter", "#34C759", "ios-cover")
                 with gr.Group(elem_id="ios-cover"):
