@@ -117,6 +117,16 @@ footer { display: none !important; }
     margin-top: -10px !important;
     padding-top: 0 !important;
 }
+/* CV footer row: helper text left, Remove CV right */
+#cv-footer-row {
+    margin-top: -10px !important;
+    padding: 0 4px !important;
+    align-items: center !important;
+    gap: 0 !important;
+}
+#cv-footer-row > .block { padding: 0 !important; margin: 0 !important; }
+#cv-footer-row > .block:first-child { flex: 1 !important; }
+#cv-footer-row > .block:last-child  { flex: 0 0 auto !important; }
 /* Remove CV button — hidden until file loaded; elem_id is on <button> itself in Gradio 6 */
 #cv-remove-btn {
     display: none !important;
@@ -124,15 +134,16 @@ footer { display: none !important; }
 body:has(#ios-cv .file-preview tr) #cv-remove-btn {
     all: unset !important;
     display: inline !important;
-    color: #8E8E93 !important;
+    color: #FF3B30 !important;
     font-size: 11px !important;
     font-weight: 400 !important;
     font-family: "SF Mono", "SFMono-Regular", ui-monospace, Menlo, monospace !important;
     cursor: pointer !important;
     transition: color 0.15s !important;
+    padding-left: 4px !important;
 }
-body:has(#ios-cv .file-preview tr) #cv-remove-btn::before { content: '× '; }
-body:has(#ios-cv .file-preview tr) #cv-remove-btn:hover { color: #FF3B30 !important; }
+
+body:has(#ios-cv .file-preview tr) #cv-remove-btn:hover { opacity: 0.7 !important; }
 
 /* ── Copy button ── */
 .copy-btn {
@@ -776,8 +787,9 @@ def build_ui():
   <p class="cvdz-title">Click to Upload</p>
 </div>""")
                     cv_upload = gr.File(label="", file_types=[".pdf"], type="filepath")
-                ios_sf("Select your CV or resume as a PDF file.")
-                remove_cv_btn = gr.Button("Remove", elem_id="cv-remove-btn")
+                with gr.Row(elem_id="cv-footer-row"):
+                    ios_sf("Select your CV or resume as a PDF file.")
+                    remove_cv_btn = gr.Button("Remove CV", elem_id="cv-remove-btn")
 
                 sh("Job Description", "#007AFF")
                 with gr.Group(elem_id="ios-jobdesc"):
