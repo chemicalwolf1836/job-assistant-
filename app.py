@@ -117,28 +117,22 @@ footer { display: none !important; }
     margin-top: -10px !important;
     padding-top: 0 !important;
 }
-/* Remove CV button — hidden until a file is loaded */
+/* Remove CV button — hidden until file loaded; elem_id is on <button> itself in Gradio 6 */
 #cv-remove-btn {
     display: none !important;
 }
 body:has(#ios-cv .file-preview tr) #cv-remove-btn {
-    display: block !important;
-}
-#cv-remove-btn button {
-    background: #2C2C2E !important;
-    color: #FFFFFF !important;
-    border: none !important;
-    border-radius: 10px !important;
-    font-size: 15px !important;
-    font-weight: 600 !important;
-    letter-spacing: -0.2px !important;
-    width: 100% !important;
-    height: 50px !important;
+    all: unset !important;
+    display: inline !important;
+    color: #8E8E93 !important;
+    font-size: 11px !important;
+    font-weight: 400 !important;
+    font-family: "SF Mono", "SFMono-Regular", ui-monospace, Menlo, monospace !important;
     cursor: pointer !important;
-    box-shadow: none !important;
-    transition: opacity 0.12s !important;
+    transition: color 0.15s !important;
 }
-#cv-remove-btn button:hover { opacity: 0.8 !important; }
+body:has(#ios-cv .file-preview tr) #cv-remove-btn::before { content: '× '; }
+body:has(#ios-cv .file-preview tr) #cv-remove-btn:hover { color: #FF3B30 !important; }
 
 /* ── Copy button ── */
 .copy-btn {
@@ -783,7 +777,7 @@ def build_ui():
 </div>""")
                     cv_upload = gr.File(label="", file_types=[".pdf"], type="filepath")
                 ios_sf("Select your CV or resume as a PDF file.")
-                remove_cv_btn = gr.Button("Remove CV", elem_id="cv-remove-btn")
+                remove_cv_btn = gr.Button("Remove", elem_id="cv-remove-btn")
 
                 sh("Job Description", "#007AFF")
                 with gr.Group(elem_id="ios-jobdesc"):
