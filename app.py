@@ -502,13 +502,19 @@ textarea::placeholder { color: #C7C7CC !important; }
     100% { opacity: 0; }
 }
 
-/* ── Output empty state ── */
+/* ── Output empty state — recessed/inactive until generated ── */
 #ios-cover:has(textarea:placeholder-shown),
 #ios-cvsugg:has(textarea:placeholder-shown),
 #ios-skills:has(textarea:placeholder-shown),
 #ios-interview:has(textarea:placeholder-shown),
 #ios-salary:has(textarea:placeholder-shown) {
-    background: #FAFAFA !important;
+    background: #F2F2F7 !important;
+    box-shadow: inset 0 0 0 1px rgba(60,60,67,0.10) !important;
+}
+
+/* Smooth transition when content generates */
+#ios-cover, #ios-cvsugg, #ios-skills, #ios-interview, #ios-salary {
+    transition: background 0.4s ease, box-shadow 0.4s ease !important;
 }
 
 /* ── Normalize section header block wrappers ── */
