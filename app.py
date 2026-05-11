@@ -303,7 +303,7 @@ textarea::placeholder { color: #C7C7CC !important; }
 /* ── File upload ── */
 #ios-cv label, #ios-export label { display: none !important; }
 
-/* Custom visual dropzone — full-width, I own the layout */
+/* Visual dropzone — display only; pointer-events off so overlay above captures clicks */
 #cv-dropzone {
     display: flex;
     flex-direction: column;
@@ -312,43 +312,68 @@ textarea::placeholder { color: #C7C7CC !important; }
     gap: 8px;
     padding: 40px 16px;
     flex: 1 1 auto;
-    pointer-events: none;
+    cursor: pointer;
     color: rgba(255,255,255,0.6);
     text-align: center;
+    pointer-events: none;
+    position: relative;
+    z-index: 1;
 }
 #cv-dropzone svg { stroke: rgba(255,255,255,0.45); margin-bottom: 4px; }
 .cvdz-title { font-size: 14px !important; color: rgba(255,255,255,0.82) !important; margin: 0 !important; }
 .cvdz-or    { font-size: 12px !important; color: rgba(255,255,255,0.35) !important; margin: 0 !important; }
 
-/* Native .wrap — transparent, absolute overlay so it handles click + drag-drop */
+/* Force .block wrappers inside #ios-cv to be position:static so .wrap can
+   position itself absolutely relative to #ios-cv (the nearest positioned ancestor) */
+#ios-cv .block { position: static !important; }
+
+/* Transparent full-area overlay — real click and drag target is the native upload button.
+   Positioned over the dropzone; z-index above it so clicks hit here, not #cv-dropzone */
 #ios-cv .wrap {
     position: absolute !important;
-    top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
+    top: 44px !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
     width: 100% !important;
+    height: calc(100% - 44px) !important;
     opacity: 0 !important;
     z-index: 5 !important;
     cursor: pointer !important;
+    pointer-events: auto !important;
+    overflow: visible !important;
+    background: transparent !important;
+    padding: 0 !important;
     margin: 0 !important;
     border: none !important;
-    background: transparent !important;
 }
 
-/* Upload button inside .wrap — also full-area */
+/* Button inside .wrap must fill the whole overlay */
 #ios-cv button[aria-dropeffect="copy"] {
-    position: absolute !important;
-    top: 0 !important; left: 0 !important;
-    width: 100% !important; height: 100% !important;
-    opacity: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: unset !important;
     cursor: pointer !important;
-    z-index: 6 !important;
-    border: none !important;
+    pointer-events: auto !important;
     background: transparent !important;
-    padding: 0 !important; margin: 0 !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
 }
 
-/* Once a file is loaded — hide the dropzone and overlay; show preview */
-#ios-cv:has(.file-preview tr) #cv-dropzone           { display: none !important; }
-#ios-cv:has(.file-preview tr) .wrap                  { display: none !important; }
+/* Once a file is loaded — hide dropzone and upload button; reveal preview inside .wrap */
+#ios-cv:has(.file-preview tr) #cv-dropzone { display: none !important; }
+#ios-cv:has(.file-preview tr) .wrap {
+    position: relative !important;
+    top: auto !important; left: auto !important;
+    right: auto !important; bottom: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    opacity: 1 !important;
+    z-index: auto !important;
+    overflow: visible !important;
+}
 #ios-cv:has(.file-preview tr) button[aria-dropeffect="copy"] { display: none !important; }
 
 .file-preview-holder {
@@ -519,6 +544,7 @@ SETUP_JS = """
         var card = document.getElementById('ios-cv');
         if (!card) { setTimeout(setupCV, 500); return; }
         fixClearBtn(card);
+
         new MutationObserver(function() {
             setTimeout(function() { fixClearBtn(card); }, 80);
         }).observe(card, { childList: true, subtree: true });
