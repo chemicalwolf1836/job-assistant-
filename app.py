@@ -197,7 +197,7 @@ body:has(#ios-cv .file-preview tr) #cv-remove-btn:hover { opacity: 0.7 !importan
 /* CV card has dark background — ios-row inside stays white */
 /* CV card — colour matches the other dark output boxes */
 #ios-cv {
-    background: var(--input-background-fill) !important;
+    background: #242426 !important;
     border-radius: 10px !important;
     border: none !important;
     overflow: hidden !important;
@@ -453,7 +453,7 @@ textarea::placeholder { color: #C7C7CC !important; }
 
 /* ── Generate button — solid iOS blue ── */
 #ios-generate button.primary {
-    background: #007AFF !important;
+    background: linear-gradient(135deg, #1A8CFF 0%, #007AFF 60%, #0060D6 100%) !important;
     color: #FFFFFF !important;
     border: none !important;
     border-radius: 10px !important;
@@ -463,14 +463,14 @@ textarea::placeholder { color: #C7C7CC !important; }
     height: 50px !important;
     width: calc(100% - 24px) !important;
     margin: 12px !important;
-    box-shadow: 0 2px 12px rgba(0,122,255,0.30) !important;
-    transition: opacity 0.12s, transform 0.1s !important;
+    box-shadow: 0 2px 16px rgba(0,122,255,0.40), 0 0 0 1px rgba(0,122,255,0.15) !important;
+    transition: opacity 0.12s, transform 0.1s, box-shadow 0.15s !important;
 }
 
 #ios-generate button.primary:hover {
-    opacity: 0.88 !important;
+    opacity: 0.92 !important;
     transform: scale(0.99) !important;
-    box-shadow: 0 4px 20px rgba(0,122,255,0.45) !important;
+    box-shadow: 0 6px 24px rgba(0,122,255,0.55), 0 0 0 1px rgba(0,122,255,0.2) !important;
 }
 
 /* ── Progress indicator ── */
@@ -485,7 +485,7 @@ textarea::placeholder { color: #C7C7CC !important; }
     margin-bottom: 6px;
 }
 #status-out .progress-track {
-    background: #E5E5EA;
+    background: #2C2C2E;
     border-radius: 4px;
     height: 4px;
     overflow: hidden;
@@ -513,10 +513,52 @@ textarea::placeholder { color: #C7C7CC !important; }
     box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05) !important;
 }
 
-/* Smooth transition when content generates */
+/* Smooth transition when content generates + hover lift */
 #ios-cover, #ios-cvsugg, #ios-skills, #ios-interview, #ios-salary {
-    transition: background 0.4s ease, box-shadow 0.4s ease !important;
+    transition: background 0.4s ease, box-shadow 0.25s ease, transform 0.15s ease !important;
 }
+#ios-cover:not(:has(textarea:placeholder-shown)):hover,
+#ios-cvsugg:not(:has(textarea:placeholder-shown)):hover,
+#ios-skills:not(:has(textarea:placeholder-shown)):hover,
+#ios-interview:not(:has(textarea:placeholder-shown)):hover,
+#ios-salary:not(:has(textarea:placeholder-shown)):hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 24px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.3) !important;
+}
+
+/* Skeleton pulse — only triggered on error via JS .error-pulse class */
+@keyframes skeleton-pulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.45; }
+}
+.error-pulse {
+    animation: skeleton-pulse 0.6s ease-in-out 4 !important;
+}
+
+/* Toast notification */
+#toast {
+    position: fixed !important;
+    bottom: 28px !important;
+    left: 50% !important;
+    transform: translateX(-50%) translateY(8px) !important;
+    background: #2C2C2E !important;
+    color: #FFFFFF !important;
+    font-size: 13px !important;
+    font-family: "SF Mono", monospace !important;
+    padding: 10px 20px !important;
+    border-radius: 20px !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.2s ease, transform 0.2s ease !important;
+    z-index: 9999 !important;
+    white-space: nowrap !important;
+}
+#toast.show {
+    opacity: 1 !important;
+    transform: translateX(-50%) translateY(0) !important;
+}
+
 /* Section header and footer text — lighten for dark bg */
 .ios-sh { color: #636366 !important; }
 .ios-sf { color: #636366 !important; }
@@ -606,6 +648,18 @@ SETUP_JS = """
     }
     setupCV();
 
+    /* ── Toast ── */
+    var toastEl = document.createElement('div');
+    toastEl.id = 'toast';
+    document.body.appendChild(toastEl);
+    var toastTimer;
+    function showToast(msg) {
+        toastEl.textContent = msg;
+        toastEl.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(function() { toastEl.classList.remove('show'); }, 2000);
+    }
+
     function setupCharCounter() {
         var jd = document.getElementById('ios-jobdesc');
         if (!jd) { setTimeout(setupCharCounter, 800); return; }
@@ -614,17 +668,40 @@ SETUP_JS = """
         if (ta._counterWired) return;
         ta._counterWired = true;
         var counter = document.createElement('div');
-        counter.style.cssText = 'font-size:11px;color:#8E8E93;padding:2px 4px;display:none;';
+        counter.style.cssText = 'font-size:11px;color:#636366;padding:2px 4px;display:none;';
         jd.insertAdjacentElement('afterend', counter);
         ta.addEventListener('input', function() {
             var n = ta.value.length;
+            var words = ta.value.trim() ? ta.value.trim().split(/\\s+/).length : 0;
             counter.style.display = n > 0 ? 'block' : 'none';
-            counter.style.color = n > 5000 ? '#FF3B30' : '#8E8E93';
-            counter.textContent = n + ' chars' + (n > 5000 ? ' — long descriptions may slow results' : '');
+            counter.style.color = n > 5000 ? '#FF3B30' : '#636366';
+            counter.textContent = words + ' words · ' + n + ' chars' + (n > 5000 ? ' — long descriptions may slow results' : '');
         });
     }
     setTimeout(setupCharCounter, 1000);
 
+    /* ── Clear All outputs ── */
+    document.addEventListener('click', function(e) {
+        if (e.target.id !== 'clear-all-btn') return;
+        ['ios-cover','ios-cvsugg','ios-skills','ios-interview','ios-salary'].forEach(function(id) {
+            var ta = document.querySelector('#' + id + ' textarea');
+            if (!ta) return;
+            var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLTextAreaElement.prototype, 'value').set;
+            nativeInputValueSetter.call(ta, '');
+            ta.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+        showToast('Outputs cleared');
+    });
+
+    /* ── Cmd+Enter / Ctrl+Enter to generate ── */
+    document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+            var btn = document.querySelector('#ios-generate button.primary');
+            if (btn && !btn.disabled) { e.preventDefault(); btn.click(); }
+        }
+    });
+
+    /* ── Copy buttons with toast ── */
     document.addEventListener('click', function(e) {
         var btn = e.target.closest('.copy-btn[data-target]');
         if (!btn) return;
@@ -642,11 +719,33 @@ SETUP_JS = """
             text = el.value;
         }
         navigator.clipboard.writeText(text).then(function() {
-            var orig = btn.textContent;
-            btn.textContent = '✓ Copied';
-            setTimeout(function() { btn.textContent = orig; }, 1600);
+            showToast('✓ Copied to clipboard');
         });
     });
+
+    /* ── Error pulse on generation failure ── */
+    function setupErrorPulse() {
+        var statusEl = document.getElementById('status-out');
+        if (!statusEl) { setTimeout(setupErrorPulse, 800); return; }
+        new MutationObserver(function() {
+            if (statusEl.textContent.indexOf('⚠') === -1) return;
+            var cards = ['ios-cover','ios-cvsugg','ios-skills','ios-interview','ios-salary'];
+            cards.forEach(function(id) {
+                var el = document.getElementById(id);
+                if (!el) return;
+                el.classList.remove('error-pulse');
+                void el.offsetWidth;
+                el.classList.add('error-pulse');
+            });
+            setTimeout(function() {
+                cards.forEach(function(id) {
+                    var el = document.getElementById(id);
+                    if (el) el.classList.remove('error-pulse');
+                });
+            }, 2400);
+        }).observe(statusEl, { childList: true, subtree: true, characterData: true });
+    }
+    setupErrorPulse();
 })();
 </script>
 """
@@ -903,7 +1002,10 @@ def build_ui():
                 gr.HTML("""
 <div class="section-header">
   <span class="ios-sh" style="color:#5AC8FA !important;padding:0 !important;">Export</span>
-  <button class="copy-btn" data-target="all">⎘ Copy All</button>
+  <div style="display:flex;gap:12px;align-items:center;">
+    <button class="copy-btn" data-target="all">⎘ Copy All</button>
+    <button class="copy-btn" id="clear-all-btn" style="color:#FF3B30 !important;">⌫ Clear</button>
+  </div>
 </div>""")
                 with gr.Group(elem_id="ios-export"):
                     ios_row("icon-teal", "Download Markdown", chevron=True)
