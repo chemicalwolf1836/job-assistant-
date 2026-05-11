@@ -35,12 +35,13 @@ CSS = """
 html, body {
     margin: 0 !important;
     padding: 0 !important;
-    background: #F2F2F7 !important;
-    color: #1C1C1E !important;
+    background: linear-gradient(135deg, #0D1117 0%, #1C1C1E 55%, #130D1C 100%) !important;
+    background-attachment: fixed !important;
+    color: #FFFFFF !important;
 }
 
 .gradio-container {
-    background: #F2F2F7 !important;
+    background: transparent !important;
     padding: 0 !important;
     max-width: 100% !important;
     min-height: 100vh !important;
@@ -54,10 +55,10 @@ footer { display: none !important; }
     top: 0 !important;
     z-index: 999 !important;
     height: 44px !important;
-    background: rgba(249,249,249,0.94) !important;
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
-    border-bottom: 0.5px solid rgba(60,60,67,0.29) !important;
+    background: rgba(13,17,23,0.85) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border-bottom: 0.5px solid rgba(255,255,255,0.08) !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -179,17 +180,17 @@ body:has(#ios-cv .file-preview tr) #cv-remove-btn:hover { opacity: 0.7 !importan
 }
 .regen-wrap button:hover { color: #007AFF !important; }
 
-/* ── iOS white grouped card ── */
+/* ── Dark cards with elevation ── */
 #ios-jobdesc, #ios-generate,
 #ios-cover, #ios-cvsugg,
 #ios-skills, #ios-interview, #ios-salary,
 #ios-export {
-    background: #FFFFFF !important;
+    background: #1E1E20 !important;
     border-radius: 10px !important;
     border: none !important;
     overflow: hidden !important;
     margin-bottom: 0 !important;
-    box-shadow: none !important;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.4), 0 1px 3px rgba(0,0,0,0.3) !important;
     padding: 0 !important;
 }
 
@@ -226,11 +227,11 @@ body:has(#ios-cv .file-preview tr) #cv-remove-btn:hover { opacity: 0.7 !importan
     display: flex;
     align-items: center;
     gap: 12px;
-    background: #FFFFFF;
-    border-bottom: 0.5px solid rgba(60,60,67,0.18);
+    background: #1E1E20;
+    border-bottom: 0.5px solid rgba(255,255,255,0.06);
 }
 
-.ios-row:hover { background: #FFFFFF !important; }
+.ios-row:hover { background: #28282A !important; }
 
 /* Clickable upload row */
 #ios-cv .ios-row {
@@ -265,7 +266,7 @@ body:has(#ios-cv .file-preview tr) #cv-remove-btn:hover { opacity: 0.7 !importan
 
 .ios-row-label {
     font-size: 15px !important;
-    color: #000000 !important;
+    color: #FFFFFF !important;
     flex: 1 !important;
     margin: 0 !important;
 }
@@ -508,14 +509,17 @@ textarea::placeholder { color: #C7C7CC !important; }
 #ios-skills:has(textarea:placeholder-shown),
 #ios-interview:has(textarea:placeholder-shown),
 #ios-salary:has(textarea:placeholder-shown) {
-    background: #F2F2F7 !important;
-    box-shadow: inset 0 0 0 1px rgba(60,60,67,0.10) !important;
+    background: #141416 !important;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05) !important;
 }
 
 /* Smooth transition when content generates */
 #ios-cover, #ios-cvsugg, #ios-skills, #ios-interview, #ios-salary {
     transition: background 0.4s ease, box-shadow 0.4s ease !important;
 }
+/* Section header and footer text — lighten for dark bg */
+.ios-sh { color: #636366 !important; }
+.ios-sf { color: #636366 !important; }
 
 /* ── Normalize section header block wrappers ── */
 .block:has(> .ios-sh),
