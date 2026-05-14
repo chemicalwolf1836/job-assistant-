@@ -1072,7 +1072,6 @@ if __name__ == "__main__":
     demo.launch(
         server_port=7860,
         share=False,
-        allowed_paths=["/Users/test/Documents/job-assistant/"],
         theme=gr.themes.Base(
             primary_hue="blue",
             neutral_hue="gray",
