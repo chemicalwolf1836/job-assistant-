@@ -910,7 +910,7 @@ def process_application(cv_file, job_description):
 
 
 def build_ui():
-    with gr.Blocks(title="Job Application Assistant") as demo:
+    with gr.Blocks(title="Job Application Assistant", theme=gr.themes.Base(primary_hue="blue", neutral_hue="gray"), css=CSS) as demo:
 
         gr.HTML(SETUP_JS)
         gr.HTML(IOS_NAV)
@@ -1072,9 +1072,4 @@ if __name__ == "__main__":
     demo.launch(
         server_port=7860,
         share=False,
-        theme=gr.themes.Base(
-            primary_hue="blue",
-            neutral_hue="gray",
-        ),
-        css=CSS,
     )
